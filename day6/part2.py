@@ -75,6 +75,7 @@ class Lab():
         self.ncols = len(self.grid[0])
         self.guard_starting_pos = self.guard.position
         self.possible_blocks = set()
+        self.checked_blocks = set()
 
     def print_self(self, trace, block_position):
         grid = deepcopy(self.grid)
@@ -116,8 +117,13 @@ class Lab():
             next_pos = self.guard.next_position()
             if self.is_obstacle(next_pos):
                 self.guard.turn_right()
-            elif not self.is_guard_starting_pos(next_pos) and next_pos.tup() not in self.possible_blocks and self.is_loop_at_pos():
-                self.possible_blocks.add(next_pos.tup())
+            elif (not self.is_guard_starting_pos(next_pos) 
+                  and next_pos.tup() not in self.possible_blocks
+                  and next_pos.tup() not in self.checked_blocks):
+                if self.is_loop_at_pos():
+                    self.possible_blocks.add(next_pos.tup())
+                else:
+                    self.checked_blocks.add(next_pos.tup())
             else:
                 self.guard.forward()
         return len(self.possible_blocks)
